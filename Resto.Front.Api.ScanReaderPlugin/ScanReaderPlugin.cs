@@ -37,7 +37,8 @@ namespace Resto.Front.Api.ScanReaderPlugin
              
             PluginContext.Operations.AddButtonToPluginsMenu("SamplePlugin: Password input example", x =>
             {
-                x.vm.ShowOkPopup("Password input example", "asdasd");
+                string testConnectToDB = DBMethods.DBCheck();
+                x.vm.ShowOkPopup("Password input example", testConnectToDB);
             });
 
             PluginContext.Log.Warn("asdasd123");      
