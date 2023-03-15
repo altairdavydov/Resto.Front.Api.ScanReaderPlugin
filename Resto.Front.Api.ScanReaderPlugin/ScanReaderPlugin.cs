@@ -32,7 +32,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
         {
             subscriptions = new CompositeDisposable
             {
-               PluginContext.Notifications.OrderEditCardSlided.Subscribe(x => x.vm.ShowYesNoPopup(x.card.Track1, x.card.Track2 + " " + x.card.FullCardTrack))
+               PluginContext.Notifications.OrderEditCardSlided.Subscribe( x => Asdasd(x))
             };
              
             PluginContext.Operations.AddButtonToPluginsMenu("SamplePlugin: Password input example", x =>
@@ -42,5 +42,13 @@ namespace Resto.Front.Api.ScanReaderPlugin
 
             PluginContext.Log.Warn("asdasd123");      
         }
+
+
+        public bool Asdasd((CardInputDialogResult card, Data.Orders.IOrder order, IOperationService os, IViewManager vm) x)
+        {
+            x.vm.ShowOkPopup("Номер карты", x.card.FullCardTrack);
+            return true;
+        }
+
     }
 }
