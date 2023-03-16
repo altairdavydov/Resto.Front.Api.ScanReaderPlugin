@@ -9,12 +9,12 @@ namespace Resto.Front.Api.ScanReaderPlugin
 {
     internal class DBMethods
     {
-        private static SqlConnection conn;
+        //private static SqlConnection conn;
 
         public static string DBCheck()
         {
             string result = "default";
-
+            /*
             conn = new SqlConnection();
             conn.ConnectionString = @"Data Source=.\SQLEXPRESS;
                           AttachDbFilename=C:\Windows\ServiceProfiles\iikoCard5POS\AppData\Roaming\iiko\iikoCard5\iikoCard5POS.mdf;
@@ -30,7 +30,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
             {
                 PluginContext.Log.Error($"error connecto to sql base, message:\r\n{ex}");
                 result = "error";
-            }
+            }*/
 
             return result;
         }
