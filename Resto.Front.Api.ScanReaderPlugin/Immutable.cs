@@ -13,5 +13,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
         public static string url = "http://localhost:7001";
 
         public static string token = "";
+
+        public static List<UserWallets> userWallets = new List<UserWallets>(); 
     }
 }
