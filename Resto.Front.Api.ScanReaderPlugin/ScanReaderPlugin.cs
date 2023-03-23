@@ -57,14 +57,14 @@ namespace Resto.Front.Api.ScanReaderPlugin
                 {
                     if (iikoCardPOSRequests.GetGuestBalance(card))
                     {
-                        ShowPopUp(card, x.vm);
+                        ShowPopUp(card, x.order.Id, x.vm);
                     }
                     else
                     {
                         iikoCardPOSRequests.GetToken();
                         if (iikoCardPOSRequests.GetGuestBalance(card))
                         {
-                            ShowPopUp(card, x.vm);
+                            ShowPopUp(card, x.order.Id, x.vm);
                         }
                         else
                         {
@@ -76,24 +76,31 @@ namespace Resto.Front.Api.ScanReaderPlugin
             return true;
         }
 
-        public void ShowPopUp(string card, IViewManager vm)
+        public void ShowPopUp(string card, Guid orderId, IViewManager vm)
         {
+            bool addGuest = false;
+
             if (Immutable.userWallets.Count > 0)
             {
                 bool found = false;
+
                 for (int i = 0; i < Immutable.userWallets.Count; i++)
                 {
                     if (Immutable.userWallets[i].name == "S7")
                     {
                         found = true;
                         string balance = Immutable.userWallets[i].balance.ToString();
-                        vm.ShowOkPopup("Информация о госте", $"Баланс гостя {card}: {balance.Substring(0, balance.Length - 3)}р.");
+                        addGuest = vm.ShowOkCancelPopup("Информация о госте", $"Баланс гостя {card}:   {balance.Substring(0, balance.Length - 3)}р.\r\nДобавить гостя в заказ?");
                     }
                 }
                 if (!found)
                 {
                     vm.ShowOkPopup("Информация о госте", $"Гость c картой {card} не найден");
                     PluginContext.Log.Info($"Guest with card {card} not found");
+                }
+                if (addGuest)
+                {
+                    iikoCardPOSRequests.AddGuest(card, orderId);                                    //vm.ShowOkPopup("asdasd", "гость добавлен");         //replace normal method
                 }
             }
             else

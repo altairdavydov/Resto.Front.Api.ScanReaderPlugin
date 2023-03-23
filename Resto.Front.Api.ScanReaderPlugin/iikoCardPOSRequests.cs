@@ -105,5 +105,77 @@ namespace Resto.Front.Api.ScanReaderPlugin
 
             return result;
         }
+
+        public static bool AddGuest(string card, Guid orderId)
+        {
+            bool result = false;
+
+            var request = (HttpWebRequest)WebRequest.Create($"{Immutable.url}/api/v2/authorize");
+            request.Method = "POST";
+            request.Headers["AccessToken"] = Immutable.token;
+            request.ContentType = "application/json";
+
+            string postData = $"{{ \"request\": {{ \"authData\": {{ \"credential\": {card}, \"searchScope\":2 }}, \"orderId\": \"{orderId}\" }} }}";
+            byte[] data = Encoding.UTF8.GetBytes(postData);
+            Stream webData = request.GetRequestStream();
+            webData.Write(data, 0, data.Length);
+            webData.Close();
+
+            try
+            {
+                WebResponse webResponse = request.GetResponse();
+                webData = webResponse.GetResponseStream();
+                StreamReader reader = new StreamReader(webData);
+                string responseFromServer = reader.ReadToEnd();
+
+                reader.Close();
+                webData.Close();
+                webResponse.Close();
+                result = true;
+            }
+            catch (Exception ex) 
+            {
+                PluginContext.Log.Error($"AddGuest method error, message: {ex}");
+            }
+
+            return result;
+        }
+        /*
+        public static bool UpdateOrder(Guid orderId, string orderNumber)
+        {
+            bool result = false;
+
+            var request = (HttpWebRequest)WebRequest.Create($"{Immutable.url}/api/v2/update");
+            request.Method = "POST";
+            request.Headers["AccessToken"] = Immutable.token;
+            request.ContentType = "application/json";
+
+            string postData = $"{{ \"order\": {{\r\n \"cashierName\": null,\r\n \"closeTime\": null,\r\n  \"fiscalChequeNumber\": null,\r\n \"guestCount\": 1,\r\n \"id\": \"{orderId}\",\r\n \"items\": [\r\n        ],\r\n        \"number\": 1488,\r\n        \"openTimeString\": \"01.12.2017 11:00:00\",\r\n        \"prechequeTime\": null,\r\n        \"restarauntSectionName\": null,\r\n        \"sum\": 0,\r\n        \"sumAfterDiscount\": 0\r\n    }} }}";
+            byte[] data = Encoding.UTF8.GetBytes(postData);
+            Stream webData = request.GetRequestStream();
+            webData.Write(data, 0, data.Length);
+            webData.Close();
+
+            try
+            {
+                WebResponse webResponse = request.GetResponse();
+                webData = webResponse.GetResponseStream();
+                StreamReader reader = new StreamReader(webData);
+                string responseFromServer = reader.ReadToEnd();
+
+                PluginContext.Log.Info(responseFromServer + "asdasd");                        //DELETE
+
+                reader.Close();
+                webData.Close();
+                webResponse.Close();
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                PluginContext.Log.Error($"UpdateOrder method error, message: {ex}");
+            }
+
+            return result;
+        }*/
     }
 }
