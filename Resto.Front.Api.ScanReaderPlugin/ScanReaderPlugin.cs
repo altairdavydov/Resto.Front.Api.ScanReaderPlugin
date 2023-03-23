@@ -32,22 +32,23 @@ namespace Resto.Front.Api.ScanReaderPlugin
         {
             subscriptions = new CompositeDisposable
             {
-               PluginContext.Notifications.OrderEditCardSlided.Subscribe( x => Asdasd(x))
+               PluginContext.Notifications.OrderEditCardSlided.Subscribe(x => Asdasd(x))
             };
              
             PluginContext.Operations.AddButtonToPluginsMenu("SamplePlugin: Password input example", x =>
             {
-                string testConnectToDB = DBMethods.DBCheck();
-                x.vm.ShowOkPopup("Password input example", testConnectToDB);
+                x.vm.ShowOkPopup("Password input example", "Test Ok");
             });
 
-            PluginContext.Log.Warn("asdasd123");      
+            PluginContext.Log.Info("Started");      
         }
 
 
         public bool Asdasd((CardInputDialogResult card, Data.Orders.IOrder order, IOperationService os, IViewManager vm) x)
         {
-            x.vm.ShowOkPopup("Номер карты", x.card.FullCardTrack);
+            string token = iikoCardPOSRequests.GetToken(x.vm);
+
+            //x.vm.ShowOkPopup("Номер карты", $"token {token} card{x.card.FullCardTrack}");
             return true;
         }
 
