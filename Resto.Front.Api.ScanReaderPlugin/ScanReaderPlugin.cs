@@ -30,6 +30,9 @@ namespace Resto.Front.Api.ScanReaderPlugin
 
         public ScanReaderPlugin()
         {
+            iikoCardPOSRequests.GetToken();
+
+
             subscriptions = new CompositeDisposable
             {
                PluginContext.Notifications.OrderEditCardSlided.Subscribe(x => Asdasd(x))
@@ -46,7 +49,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
 
         public bool Asdasd((CardInputDialogResult card, Data.Orders.IOrder order, IOperationService os, IViewManager vm) x)
         {
-            string token = iikoCardPOSRequests.GetToken(x.vm);
+            iikoCardPOSRequests.GetToken();
 
             //x.vm.ShowOkPopup("Номер карты", $"token {token} card{x.card.FullCardTrack}");
             return true;

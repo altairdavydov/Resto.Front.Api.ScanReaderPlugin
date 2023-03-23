@@ -12,12 +12,9 @@ namespace Resto.Front.Api.ScanReaderPlugin
 {
     internal class iikoCardPOSRequests
     {
-        
-        public static string GetToken(IViewManager vm = null)
+        public static void GetToken()
         {
-            string result = "test";
-
-            var request = (HttpWebRequest)WebRequest.Create($"http://localhost:7001/api/v1/getAccessToken?userName={Immutable.card5Login}&password={Immutable.card5Pass}");
+            var request = (HttpWebRequest)WebRequest.Create($"{Immutable.url}/api/v1/getAccessToken?userName={Immutable.card5Login}&password={Immutable.card5Pass}");
             request.Method = "GET";
 
             try
@@ -26,17 +23,14 @@ namespace Resto.Front.Api.ScanReaderPlugin
                 using (var responseStream = response.GetResponseStream())
                 using (var responseReader = new StreamReader(responseStream))
                 {
-                    result = responseReader.ReadToEnd();
+                    Immutable.token = responseReader.ReadToEnd();
                 }
+                PluginContext.Log.Info($"Received token: {Immutable.token}");
             }
             catch (Exception ex)
             {
-                vm.ShowOkPopup("responce", ex.Message);
+                PluginContext.Log.Error($"GetToken method error: {ex.Message}");
             }
-            PluginContext.Log.Info(result);
-            //vm.ShowOkPopup("responce", result);
-
-            return result;
         }
 
         private static void GetGuestBalance()
