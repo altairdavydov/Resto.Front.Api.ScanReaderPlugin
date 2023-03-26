@@ -8,10 +8,14 @@ using System.Windows.Forms;
 using System.Windows.Markup;
 using Resto.Front.Api.Attributes;
 using Resto.Front.Api.Attributes.JetBrains;
+using Resto.Front.Api.Data.Brd;
 using Resto.Front.Api.Data.Security;
 using Resto.Front.Api.Data.View;
 using Resto.Front.Api.Exceptions;
+using Resto.Front.Api.Extensions;
 using Resto.Front.Api.UI;
+using System.IO;
+using Resto.Front.Api.Data.Settings;
 
 namespace Resto.Front.Api.ScanReaderPlugin
 {
@@ -31,9 +35,17 @@ namespace Resto.Front.Api.ScanReaderPlugin
         }
 
         public ScanReaderPlugin()
-        {
-            PluginContext.Log.Info("Started");
-            iikoCardPOSRequests.GetToken();
+        {     
+            if(FileMethods.ReadConfig())
+            {
+                PluginContext.Log.Info("Started");
+                iikoCardPOSRequests.GetToken();
+            }
+            else
+            {
+                PluginContext.Log.Warn("Because configFile is empty or was not read, the plugin was stopped\r\nCheck the ScanReader.config file and reload the plugin");
+                PluginContext.Shutdown();
+            }
 
             subscriptions = new CompositeDisposable
             {
@@ -42,12 +54,19 @@ namespace Resto.Front.Api.ScanReaderPlugin
              
             PluginContext.Operations.AddButtonToPluginsMenu("SamplePlugin: Password input example", x =>
             {
-                x.vm.ShowOkPopup("Password input example", "Test: Ok");
+                string a = "asd";
+                
+                if(File.Exists("C:\\Users\\Altair\\AppData\\Roaming\\iiko\\CashServer\\PluginConfigs\\Resto.Front.Api.ScanReader\\123.txt"))
+                {
+                    a = "sdf";
+                }
+
+                x.vm.ShowOkPopup("Password input example", $"Test: {a}");
             });  
         }
 
 
-        public bool CheckCard((CardInputDialogResult card, Data.Orders.IOrder order, IOperationService os, IViewManager vm) x)
+        public bool CheckCard((CardInputDialogResult card, Api.Data.Orders.IOrder order, IOperationService os, IViewManager vm) x)
         {
             if (x.card.Track2.Contains(" "))
             {
@@ -57,14 +76,31 @@ namespace Resto.Front.Api.ScanReaderPlugin
                 {
                     if (iikoCardPOSRequests.GetGuestBalance(card))
                     {
-                        ShowPopUp(card, x.order.Id, x.vm);
+                        try
+                        {
+                            PhoneDto phoneDto = new PhoneDto();
+                            phoneDto.PhoneValue = "+71234567890";
+                            phoneDto.IsMain = true;
+                            List<PhoneDto> phones = new List<PhoneDto>();
+                            phones.Add(phoneDto);
+
+                            //x.os.CreateClient(Guid.NewGuid(), "asdasd", phones, card, DateTime.Now, x.os.AuthenticateByPin("0000"));
+                            Guid a = Guid.Parse("bafc06d3-b2a0-4326-b3a0-556b79d6b927");
+                            x.os.AddClientToOrder(x.os.AuthenticateByPin("0000"), x.order, x.os.GetClientById(a));
+                        }
+                        catch (Exception ex) 
+                        {
+                            PluginContext.Log.Error($"TEST {ex.Message}");
+                        }
+                        ShowPopUp(card, x.vm);
                     }
                     else
                     {
                         iikoCardPOSRequests.GetToken();
                         if (iikoCardPOSRequests.GetGuestBalance(card))
                         {
-                            ShowPopUp(card, x.order.Id, x.vm);
+                            ShowPopUp(card, x.vm);
+                            //x.os.AddIikoCardReferrerToOrder();
                         }
                         else
                         {
@@ -76,20 +112,20 @@ namespace Resto.Front.Api.ScanReaderPlugin
             return true;
         }
 
-        public void ShowPopUp(string card, Guid orderId, IViewManager vm)
+        public void ShowPopUp(string card, IViewManager vm)
         {
             bool addGuest = false;
 
-            if (Immutable.userWallets.Count > 0)
+            if (Data.userWallets.Count > 0)
             {
                 bool found = false;
 
-                for (int i = 0; i < Immutable.userWallets.Count; i++)
+                for (int i = 0; i < Data.userWallets.Count; i++)
                 {
-                    if (Immutable.userWallets[i].name == "S7")
+                    if (Data.userWallets[i].name == "S7")
                     {
                         found = true;
-                        string balance = Immutable.userWallets[i].balance.ToString();
+                        string balance = Data.userWallets[i].balance.ToString();
                         addGuest = vm.ShowOkCancelPopup("Информация о госте", $"Баланс гостя {card}:   {balance.Substring(0, balance.Length - 3)}р.\r\nДобавить гостя в заказ?");
                     }
                 }
@@ -100,7 +136,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
                 }
                 if (addGuest)
                 {
-                    iikoCardPOSRequests.AddGuest(card, orderId);                                    //vm.ShowOkPopup("asdasd", "гость добавлен");         //replace normal method
+
                 }
             }
             else
