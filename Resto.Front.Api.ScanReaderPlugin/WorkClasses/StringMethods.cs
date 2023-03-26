@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Resto.Front.Api.Data.Brd;
+using Resto.Front.Api.Data.View;
+using Resto.Front.Api.Extensions;
+using Resto.Front.Api.UI;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Resto.Front.Api.ScanReaderPlugin
 {
@@ -47,6 +47,31 @@ namespace Resto.Front.Api.ScanReaderPlugin
             }
 
             return str;
+        }
+
+        public static Guid GetCustomerId(IOperationService os, string card)
+        {
+            Guid result = new Guid();
+
+            try
+            {
+                PhoneDto phoneDto = new PhoneDto();
+                phoneDto.PhoneValue = "+71234123499";
+                phoneDto.IsMain = true;
+                List<PhoneDto> phones = new List<PhoneDto>();
+                phones.Add(phoneDto);
+                os.CreateClient(Guid.NewGuid(), "asdasd", phones, card, DateTime.Now, os.AuthenticateByPin(Immutable.pin));
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("is already bound"))
+                {
+                    string id = ex.Message.Split('(')[1];
+                    id = id.Split(')')[0];
+                    result = Guid.Parse(id);
+                }
+            }
+            return result;
         }
     }
 }

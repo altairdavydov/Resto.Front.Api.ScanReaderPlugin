@@ -15,9 +15,10 @@ namespace Resto.Front.Api.ScanReaderPlugin
     [Serializable]
     public class Immutable
     {
-        public string card5Login { get; set; }    //LapTop Test 2177570
-        public string card5Pass { get; set; }  //LapTop Test d6q%23*DEc
+        public string card5Login { get; set; }
+        public string card5Pass { get; set; }
         public string iikoPosServerUrl { get; set; }
+        public const string pin = "12344321";      //system pin for user of centralized delivery
     }
 
     public class UserData
