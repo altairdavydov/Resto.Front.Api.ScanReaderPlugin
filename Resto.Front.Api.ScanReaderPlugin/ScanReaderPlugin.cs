@@ -12,7 +12,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
     /// Copy build result Resto.Front.Api.ScanReaderPlugin.dll to \Plugins\Resto.Front.Api.ScanReaderPlugin\ folder near iikoFront.exe
     /// </summary>
     [UsedImplicitly]
-    [PluginLicenseModuleId(0021005918)]
+    [PluginLicenseModuleId(0021016318)]           //0021016318 ApiPayment         0021005918 TestDemo
     public sealed class ScanReaderPlugin : IFrontPlugin
     {
         private readonly CompositeDisposable subscriptions;
