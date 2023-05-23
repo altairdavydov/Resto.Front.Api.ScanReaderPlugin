@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Disposables;
+using System.Threading.Tasks;
 using Resto.Front.Api.Attributes;
 using Resto.Front.Api.Attributes.JetBrains;
 using Resto.Front.Api.Data.View;
@@ -56,7 +57,8 @@ namespace Resto.Front.Api.ScanReaderPlugin
                     else
                     {
                         iikoCardPOSRequests.GetToken();
-                        if (iikoCardPOSRequests.GetGuestBalance(card))
+
+                        if(iikoCardPOSRequests.GetGuestBalance(card))
                         {
                             ShowPopUp(card, x);
                         }

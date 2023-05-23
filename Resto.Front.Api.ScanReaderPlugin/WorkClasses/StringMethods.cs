@@ -70,6 +70,10 @@ namespace Resto.Front.Api.ScanReaderPlugin
                     id = id.Split(')')[0];
                     result = Guid.Parse(id);
                 }
+                else
+                {
+                    PluginContext.Log.Error($"GetCustomerId method error, message: {ex}");
+                }
             }
             return result;
         }
