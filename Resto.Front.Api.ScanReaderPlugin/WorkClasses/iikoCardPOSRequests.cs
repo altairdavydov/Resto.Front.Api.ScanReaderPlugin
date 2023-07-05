@@ -26,7 +26,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
             }
             catch (Exception ex)
             {
-                PluginContext.Log.Error($"GetToken method error: {ex.Message}");
+                PluginContext.Log.Error($"GetToken method error: {ex.Message}\r\nuserName={Data.pluginData.card5Login}, password={Data.pluginData.card5Pass}");
             }
         }
 
@@ -94,6 +94,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
             catch (Exception e)
             {
                 PluginContext.Log.Error($"GetGuestBalance method error, message {e}");
+                result = false;
             }
             PluginContext.Log.Info($"GetGuestBalance for card: {card}");
 

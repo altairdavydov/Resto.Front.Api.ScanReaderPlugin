@@ -86,7 +86,7 @@ namespace Resto.Front.Api.ScanReaderPlugin
                     {
                         found = true;
                         string balance = Data.userWallets[i].balance.ToString();
-                        addGuest = x.vm.ShowOkCancelPopup("Информация о госте", $"Баланс гостя {card}:   {balance.Substring(0, balance.Length - 3)}р.\r\nДобавить гостя в заказ?");
+                        addGuest = x.vm.ShowOkCancelPopup("Информация о госте", $"Баланс гостя {card}: {balance.Substring(0, balance.Length - 3)}р.\r\nДобавить гостя в заказ?");
                     }
                 }
                 if (!found)
@@ -98,8 +98,30 @@ namespace Resto.Front.Api.ScanReaderPlugin
                 {
                     try
                     {
-                        Guid GuestId = StringMethods.GetCustomerId(x.os, card);
-                        x.os.AddClientToOrder(x.os.AuthenticateByPin(Immutable.pin), x.order, x.os.GetClientById(GuestId));
+                        Guid defaultGuid = new Guid();
+                        Guid GuestId = new Guid();
+                        bool success = false;
+
+                        for(int i = 0; i < 5; i++)
+                        {
+                            GuestId = StringMethods.GetCustomerId(x.os, card);
+
+                            if (GuestId != defaultGuid)
+                            {
+                                success = true;
+                                break;
+                            }
+                        }
+
+                        if(success)
+                        {
+                            x.os.AddClientToOrder(x.os.AuthenticateByPin(Immutable.pin), x.order, x.os.GetClientById(GuestId));
+                        }
+                        else
+                        {
+                            x.vm.ShowOkPopup("Error", "Произошла ошибка плагина");
+                            PluginContext.Log.Error($"returned empty id for card: {card}");
+                        }
                     }
                     catch (Exception ex)
                     {

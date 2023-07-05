@@ -4,6 +4,7 @@ using Resto.Front.Api.Extensions;
 using Resto.Front.Api.UI;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Resto.Front.Api.ScanReaderPlugin
 {
@@ -76,6 +77,17 @@ namespace Resto.Front.Api.ScanReaderPlugin
                 }
             }
             return result;
+        }
+
+        public static string PassToUnicode(string data)
+        {
+            byte[] utf8Bytes = new byte[data.Length];
+            for (int i = 0; i < data.Length; ++i)
+            {
+                utf8Bytes[i] = (byte)data[i];
+            }
+
+            return Encoding.UTF8.GetString(utf8Bytes, 0, utf8Bytes.Length);
         }
     }
 }
